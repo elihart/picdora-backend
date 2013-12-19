@@ -3,7 +3,6 @@ class CreateImages < ActiveRecord::Migration
     create_table :images do |t|
       t.string :imgurId
       t.integer :reddit_score
-      t.string :subreddit
       t.boolean :reported, default: false
       t.boolean :nsfw, default: false
       t.boolean :gif, default: false
