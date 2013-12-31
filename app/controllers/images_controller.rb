@@ -31,7 +31,7 @@ class ImagesController < ApplicationController
 
     images = images.order(reddit_score: :desc).limit(count)
 
-    render json: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
+    render json: {images: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])}
   end
 
   def count
