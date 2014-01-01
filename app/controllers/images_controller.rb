@@ -31,7 +31,27 @@ class ImagesController < ApplicationController
 
     images = images.order(reddit_score: :desc).limit(count)
 
-    render json: {images: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])}
+    render json: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
+  end
+
+  def range
+    start = params[:start] || 1
+    stop = params[:end] || Image.maximum(:id)
+    before = params[:before]
+    after = params[:after]
+
+
+    if before && after
+      images = Image.where(id: start..stop, updated_at: Time.at(after.to_i)..Time.at(before.to_i))
+    elsif before
+      images = Image.where(id: start..stop, updated_at: Time.at(0)..Time.at(before.to_i))
+    elsif after
+      images = Image.where(id: start..stop, updated_at: Time.at(after.to_i)..Time.now)
+    else
+      images = Image.where(id: start..stop)
+    end
+
+    render json: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
   end
 
   def count
