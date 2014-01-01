@@ -35,10 +35,15 @@ class ImagesController < ApplicationController
   end
 
   def range
-    start = params[:start] || 1
-    stop = params[:end] || Image.maximum(:id)
+    start = params[:start]
+    stop = params[:end]
     before = params[:before]
     after = params[:after]
+
+    if start.nil? || stop.nil?
+      render json: {}
+      return
+    end
 
 
     if before && after
@@ -76,4 +81,5 @@ class ImagesController < ApplicationController
 
     render json: {count: result}
   end
+
 end
