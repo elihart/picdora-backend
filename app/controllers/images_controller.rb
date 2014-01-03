@@ -34,10 +34,34 @@ class ImagesController < ApplicationController
     render json: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
   end
 
+  def new
+    afterId = params[:id]
+    afterTime = params[:after]
+    batchLimit = params[:limit] || 1000
+    batchLimit = batchLimit.to_i
+
+    # Get one more image than we need so we can tell them what the next image id is
+    images = Image.where("id >= ? and created_at > ?", afterId, Time.at(afterTime.to_i)).order(id: :asc).limit(batchLimit + 1)
+
+    nextImage = images[batchLimit]
+
+    result = {}
+    if nextImage
+      result[:nextId] = nextImage.id
+    end
+
+    # Don't include the last image in the range
+    result[:images] = images[0...batchLimit].as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
+
+
+    render json: result
+  end
+
   def update
     afterId = params[:id]
     afterTime = params[:time]
     batchLimit = params[:limit] || 1000
+    batchLimit = batchLimit.to_i
 
     # Get one more image than we need so we can tell them what the next image id is
     images = Image.where("id >= ? and updated_at > ?", afterId, Time.at(afterTime.to_i)).order(id: :asc).limit(batchLimit + 1)
