@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140101191906) do
+ActiveRecord::Schema.define(version: 20140109012755) do
 
   create_table "albums", force: true do |t|
     t.boolean  "nsfw",         default: false
@@ -40,7 +40,6 @@ ActiveRecord::Schema.define(version: 20140101191906) do
   create_table "images", force: true do |t|
     t.string   "imgurId"
     t.integer  "reddit_score"
-    t.string   "subreddit"
     t.boolean  "reported",     default: false
     t.boolean  "nsfw",         default: false
     t.boolean  "gif",          default: false
