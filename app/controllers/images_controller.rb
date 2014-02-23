@@ -34,6 +34,7 @@ class ImagesController < ApplicationController
     render json: images.as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
   end
 
+  # Get images created after a certain date
   def new
     afterId = params[:id]
     afterTime = params[:after]
