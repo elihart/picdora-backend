@@ -37,7 +37,7 @@ class ImagesController < ApplicationController
   # Get images created after a certain date
   def new
     afterId = params[:id]
-    afterTime = params[:after]
+    afterTime = params[:time]
     batchLimit = params[:limit] || 1000
     batchLimit = batchLimit.to_i
 
