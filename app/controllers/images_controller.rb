@@ -51,11 +51,13 @@ class ImagesController < ApplicationController
       result[:nextId] = nextImage.id
     end
 
+
+
     # Don't include the last image in the range
     result[:images] = images[0...batchLimit].as_json(only: [:id, :imgurId, :reddit_score, :nsfw, :gif, :category_id])
 
 
-    render json: result
+    render json: result.to_json
   end
 
   def update

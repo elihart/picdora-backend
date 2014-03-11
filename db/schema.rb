@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140308172433) do
+ActiveRecord::Schema.define(version: 20140308211350) do
 
   create_table "albums", force: true do |t|
     t.boolean  "nsfw",         default: false
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20140308172433) do
     t.boolean  "porn",       default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "icon"
   end
 
   create_table "images", force: true do |t|
