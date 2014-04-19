@@ -3,7 +3,7 @@ namespace :backup do
   task images: :environment do
     File.open('images_backup.json', 'w') do |f|
       Image.where.not(imgurId: nil).each do |image|
-        cat = image.subreddit ? image.subreddit : image.category.name
+        cat = image.category.name
 
         json = Jbuilder.encode do |json|
           json.imgurId image.imgurId
@@ -41,7 +41,6 @@ namespace :backup do
         json = Jbuilder.encode do |json|
           json.name cat.name
           json.nsfw cat.nsfw
-          json.porn cat.porn
         end
 
         f.puts(json.to_s)
