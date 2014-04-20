@@ -41,6 +41,8 @@ ActiveRecord::Schema.define(version: 20140420175058) do
     t.integer "image_id"
   end
 
+  add_index "categories_images", ["category_id", "image_id"], name: "by_image_and_category", unique: true
+
   create_table "images", force: true do |t|
     t.string   "imgurId"
     t.integer  "reddit_score"
