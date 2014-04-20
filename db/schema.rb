@@ -23,16 +23,16 @@ ActiveRecord::Schema.define(version: 20140419211141) do
     t.datetime "updated_at"
   end
 
+  create_table "albums_categories", id: false, force: true do |t|
+    t.integer "category_id"
+    t.integer "album_id"
+  end
+
   create_table "categories", force: true do |t|
     t.string   "name"
     t.boolean  "nsfw",       default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "categories_albums", id: false, force: true do |t|
-    t.integer "category_id"
-    t.integer "album_id"
   end
 
   create_table "categories_images", id: false, force: true do |t|
@@ -46,7 +46,6 @@ ActiveRecord::Schema.define(version: 20140419211141) do
     t.boolean  "reported",     default: false
     t.boolean  "nsfw",         default: false
     t.boolean  "gif",          default: false
-    t.integer  "category_id"
     t.integer  "album_id"
     t.boolean  "deleted",      default: false
     t.datetime "created_at"
@@ -60,7 +59,7 @@ ActiveRecord::Schema.define(version: 20140419211141) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "device"
+    t.string   "device_key"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

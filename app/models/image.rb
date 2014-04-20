@@ -3,4 +3,5 @@ class Image < ActiveRecord::Base
   belongs_to :album
 
   validates :imgurId, uniqueness: {case_sensitive: true}
+  validates :imgurId, :reddit_score, presence: true
 end

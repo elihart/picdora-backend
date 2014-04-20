@@ -10,7 +10,7 @@ class CreateAlbums < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :categories_albums, id: false do |t|
+    create_table :albums_categories, id: false do |t|
       t.belongs_to :category
       t.belongs_to :album
     end
