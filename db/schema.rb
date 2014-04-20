@@ -11,12 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140419211141) do
+ActiveRecord::Schema.define(version: 20140420155200) do
 
   create_table "albums", force: true do |t|
     t.boolean  "nsfw",         default: false
     t.integer  "reddit_score"
-    t.integer  "category_id"
     t.string   "imgurId"
     t.boolean  "deleted",      default: false
     t.datetime "created_at"
@@ -27,6 +26,8 @@ ActiveRecord::Schema.define(version: 20140419211141) do
     t.integer "category_id"
     t.integer "album_id"
   end
+
+  add_index "albums_categories", ["category_id", "album_id"], name: "by_album_and_category", unique: true
 
   create_table "categories", force: true do |t|
     t.string   "name"

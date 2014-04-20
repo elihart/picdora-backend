@@ -3,11 +3,18 @@ require 'json'
 fileName = ARGV[0]
 
 # Create migration file
-File.open("../../db/migrate/#{Time.now.utc.to_s.chomp("UTC").gsub(/[-: ]/, '') }_add_images#{Time.now.to_i}.rb", 'w') do |migration|
+time = Time.now.utc.to_s.chomp("UTC").gsub(/[-: ]/, '')
+File.open("../../db/migrate/#{time}_add_images#{time}.rb", 'w') do |migration|
   # Add migration info to top of file
   migration.puts <<-START_CODE
-    class AddImages#{Time.now.to_i} < ActiveRecord::Migration
+    class AddImages#{time} < ActiveRecord::Migration
       def change
+
+        # Map category name to id for easy access later
+    categories = {}
+    Category.all.each do |cat|
+      categories["\#{cat.name}"] = cat
+    end
   START_CODE
 
 
@@ -25,11 +32,25 @@ File.open("../../db/migrate/#{Time.now.utc.to_s.chomp("UTC").gsub(/[-: ]/, '') }
       # Add line to migration
       if isAlbum
         migration.puts <<-MIGRATE_CODE
-          Album.new(imgurId: '#{imgurId}', reddit_score: #{score}, nsfw: #{nsfw}, category_id: Category.where(name: '#{subreddit}').first.id).save(validate: false)
+          a = Album.create(imgurId: '#{imgurId}', reddit_score: #{score}, nsfw: #{nsfw})
+          if(a.id.nil?)
+            a = Album.where(imgurId: "#{imgurId}").first
+          end
+          c = categories["#{subreddit}"]
+          unless a.categories.exists?(c)
+            a.categories << c 
+          end
         MIGRATE_CODE
       else
         migration.puts <<-MIGRATE_CODE
-          Image.new(imgurId: '#{imgurId}', reddit_score: #{score}, category_id: Category.where(name: '#{subreddit}').first.id, nsfw: #{nsfw}, gif: #{gif}).save(validate: false)
+          i = Image.new(imgurId: '#{imgurId}', reddit_score: #{score}, nsfw: #{nsfw}, gif: #{gif})
+          if(i.id.nil?)
+            i = Image.where(imgurId: "#{imgurId}").first
+          end
+          c = categories["#{subreddit}"]
+          unless i.categories.exists?(c)
+            i.categories << c 
+          end 
         MIGRATE_CODE
       end
     end

@@ -2,21 +2,44 @@ require 'open-uri'
 require 'cgi'
 require 'json'
 
+
 MIN_SCORE_REQUIRED = 10
 
-#SUBREDDITS = %w[]
+# The first argument will be a list of subreddits to use, otherwise use the default
+subreddit_list = ARGV[0]
+if(subreddit_list.nil?)
+  subreddit_list = 'subreddit_list'
+end
+
+#SUBREDDITS = %w[day week month year all]
 TIME = %w[week]
+
+# If there are more than 1 arguments than the ones after the first will be the time frames to search on
+ARGV.each_with_index do |arg, i|
+  # The first argument is the file name
+  if i == 0 
+    next
+  # If there is more than one argument then clear the default TIME list
+  elsif i == 1
+    TIME.clear
+  end
+
+  # Add the time
+  TIME.push(arg)      
+end
 
 # Get list of subreddits to use
 subreddits = []
-File.open('subreddit_list', 'r') do |f|
+File.open(subreddit_list, 'r') do |f|
   while (line = f.gets)
     # Strip any whitespace, downcase, and add to list if not already present
     sub = line.strip.downcase
-    if !subreddits.include?(sub)
-      subreddits.push(sub)
-    else
+    if subreddits.include?(sub)
       puts "#{sub} has a duplicate"
+    elsif sub.nil? || sub.empty?
+        puts "Blank line found"
+    else
+      subreddits.push(sub)
     end
   end
 end
@@ -44,17 +67,17 @@ def GetImagesFromSubreddits(subs)
           links.each do |link|
             # If the score is too low we're done
             if (link[:score] < MIN_SCORE_REQUIRED)
-              break
+              next
             end
 
             # Get all imgur id's from this link
-            getImgurIdsFromUrl(link[:url]).each do |id|
+            getImgurIdsFromUrl(link[:url]).each do |info|
               # Don't add duplicate images
-              unless image_ids.include?(id)
-                f.puts(JSON.generate({imgurId: id[:value], score: link[:score], subreddit: subreddit, nsfw: link[:nsfw], gif: link[:gif], isAlbum: id[:isAlbum]}))
+              unless image_ids.include?(info)
+                f.puts(JSON.generate({imgurId: info[:value], score: link[:score], subreddit: subreddit, nsfw: link[:nsfw], gif: link[:gif], isAlbum: info[:isAlbum]}))
                 counter += 1
                 subCounter += 1
-                image_ids.push(id)
+                image_ids.push(info)
               end
             end
           end

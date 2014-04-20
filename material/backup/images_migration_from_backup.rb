@@ -14,7 +14,7 @@ class AddImages < ActiveRecord::Migration
     # Map category name to id for easy access later
     categories = {}
     Category.all.each do |cat|
-      categories["\#{cat.name}"] = cat.id
+      categories["\#{cat.name}"] = cat
     end
     START_CODE
 
@@ -24,20 +24,35 @@ class AddImages < ActiveRecord::Migration
     while (line = file.gets)
       json = JSON.parse(line)
 
+      cat = nil
+      imgurId = nil
       attrs = []
       json.each do |key, value|
         if key == "category"
-          attrs.push("category_id: categories['#{value}']")
+         cat = value
         elsif value.instance_of? String
           attrs.push("#{key}: '#{value}'")
         else
           attrs.push("#{key}: #{value}")
         end
+
+        if key == "imgurId"
+         imgurId = value
+       end
       end
 
 
       # Add line to migration
-      migration.puts("\t\tImage.new(#{attrs.join(", ")}).save(validate: false)")
+      migration.puts <<-CREATE
+    i = Image.create(#{attrs.join(", ")})
+    if(i.id.nil?)
+      i = Image.where(imgurId: "#{imgurId}").first
+    end
+    c = categories["#{cat}"]
+    unless i.categories.exists?(c)
+      i.categories << c 
+    end 
+      CREATE
     end
 
     # Add end tags

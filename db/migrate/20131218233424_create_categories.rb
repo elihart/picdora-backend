@@ -11,5 +11,7 @@ class CreateCategories < ActiveRecord::Migration
       t.belongs_to :category
       t.belongs_to :image
     end
+
+    add_index :categories_images, [ :category_id, :image_id ], unique: true, name: "by_image_and_category"
   end
 end

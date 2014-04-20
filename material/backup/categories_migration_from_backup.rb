@@ -19,7 +19,9 @@ class AddCategories < ActiveRecord::Migration
 
       attrs = []
       json.each do |key, value|
-        if value.instance_of? String
+        if  key == "porn"
+          # Don't want that attr anymore
+        elsif value.instance_of? String
           attrs.push("#{key}: '#{value}'")
         else
           attrs.push("#{key}: #{value}")
@@ -28,7 +30,7 @@ class AddCategories < ActiveRecord::Migration
 
 
       # Add line to migration
-      migration.puts("\t\tCategory.new(#{attrs.join(", ")}).save(validate: false)")
+      migration.puts("\t\tCategory.create(#{attrs.join(", ")})")
     end
 
     # Add end tags
