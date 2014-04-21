@@ -28,7 +28,7 @@ namespace :restore do
             i.categories << c
           end
         end 
-        
+
         count += 1
         if (count % 10000 == 0) 
           puts "#{count} : #{Time.now}" 
@@ -39,7 +39,7 @@ namespace :restore do
     end
   end
 
-  desc "Backup albums"
+  desc "Restore albums"
   task albums: :environment do
     count = 0
     startTime = Time.now
@@ -52,19 +52,12 @@ namespace :restore do
        
         imgurId = json["imgurId"]
         nsfw = json["nsfw"]
-        category = json["category"]
+        categories = json["category"]
         reddit_score = json["reddit_score"]
 
-        a = Album.create(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score)
-        if(a.id.nil?)
-          a = Album.where(imgurId: imgurId).first
-        end
-        
-        Category.where(name: category).each do |c|
-          unless a.categories.exists?(c)
-            a.categories << c
-          end
-        end 
+        a = Album.new(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score)
+        a.save(validate: false)
+        a.categories= Category.where(name: categories)
       
         count += 1
         if (count % 10000 == 0) 
