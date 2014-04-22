@@ -1,13 +1,12 @@
 namespace :backup do
   desc "Backup all images to json file"
   task images: :environment do
-    File.open('images_backup.json', 'w') do |f|
-      
+    File.open('images_backup.json', 'w') do |f|      
       count = 0
       startTime = Time.now
       puts "Starting image backup at #{startTime}"
       
-      Image.all.each do |image|
+      Image.find_each do |image|
         categories = image.categories.pluck(:name)
 
         json = Jbuilder.encode do |json|
@@ -37,7 +36,7 @@ namespace :backup do
       startTime = Time.now
       puts "Starting album backup at #{startTime}"
 
-      Album.all.each do |album|
+      Album.find_each do |album|
         categories = album.categories.pluck(:name)
 
         json = Jbuilder.encode do |json|

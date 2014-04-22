@@ -14,7 +14,7 @@ namespace :restore do
       
         imgurId = json["imgurId"]
         nsfw = json["nsfw"]
-        category = json["category"]
+        categories = json["categories"]
         reddit_score = json["reddit_score"]
         gif = json["gif"]
       
@@ -23,7 +23,7 @@ namespace :restore do
           i = Image.where(imgurId: imgurId).first
         end
         
-        Category.where(name: category).each do |c|
+        Category.where(name: categories).each do |c|
           unless i.categories.exists?(c)
             i.categories << c
           end
@@ -52,7 +52,7 @@ namespace :restore do
        
         imgurId = json["imgurId"]
         nsfw = json["nsfw"]
-        categories = json["category"]
+        categories = json["categories"]
         reddit_score = json["reddit_score"]
 
         a = Album.new(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score)
