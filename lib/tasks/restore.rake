@@ -18,16 +18,9 @@ namespace :restore do
         reddit_score = json["reddit_score"]
         gif = json["gif"]
       
-        i = Image.create(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score, gif: gif)
-        if(i.id.nil?)
-          i = Image.where(imgurId: imgurId).first
-        end
-        
-        Category.where(name: categories).each do |c|
-          unless i.categories.exists?(c)
-            i.categories << c
-          end
-        end 
+        i = Image.new(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score, gif: gif)
+        i.save(validate: false)
+        i.categories= Category.where(name: categories)
 
         count += 1
         if (count % 10000 == 0) 
