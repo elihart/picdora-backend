@@ -29,6 +29,8 @@ namespace :scrape do
           gif = json["gif"]
           isAlbum = json["isAlbum"]
 
+          next unless isAlbum
+
           item = nil
           if isAlbum
             item = Album.create(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score)

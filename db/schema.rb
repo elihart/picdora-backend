@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140421001913) do
+ActiveRecord::Schema.define(version: 20140422211040) do
 
   create_table "albums", force: true do |t|
     t.boolean  "nsfw",         default: false
@@ -34,7 +34,10 @@ ActiveRecord::Schema.define(version: 20140421001913) do
     t.boolean  "nsfw",       default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "icon"
   end
+
+  add_index "categories", ["name"], name: "category_name_ix"
 
   create_table "categories_images", id: false, force: true do |t|
     t.integer "category_id"
