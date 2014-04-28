@@ -141,6 +141,17 @@ def getImgurIdsFromUrl(url)
     return result
   end
 
+  # Gallery images can be either albums or just images. They are of the form 
+  # imgur.com/gallery/{imgurId} whether it is an album or image. Id's don't seem to be unique
+  # between image and album. I've found one id that is both, depending on how it is accessed. 
+  # I'm not sure how the gallery knows whether the given id is album or image and without that
+  # the id can't be properly classified. TODO: figure this out. For now let's skip it to prevent
+  # bad imgurIds.
+  if url.match("/gallery/")
+    puts "gallery"
+    return result
+  end
+
   # Check for an album. As far as I know if it's an album there can only be one id
   # The album id should come after /a/
   if url.match("imgur.com/a/")
