@@ -4,4 +4,14 @@ class Category < ActiveRecord::Base
 
   validates :name, uniqueness: {case_sensitive: false}
   validates :name, presence: true
+
+  def as_json(options={})
+  	{
+        id: self.id,
+        name: self.name,
+        nsfw: self.nsfw,
+        icon: self.icon,
+        updated_at: self.updated_at.to_time.to_i
+    }
+  end
 end

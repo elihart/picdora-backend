@@ -5,8 +5,6 @@ class Image < ActiveRecord::Base
   validates :imgurId, uniqueness: {case_sensitive: true}
   validates :imgurId, :reddit_score, presence: true
 
- 	# Takes an array of images and create a json representation of it that 
- 	# includes all of the values expected by android.
   def as_json(options={})
   	{
         id: self.id,

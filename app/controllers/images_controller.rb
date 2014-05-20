@@ -22,7 +22,7 @@ class ImagesController < ApplicationController
 
     # Include images below the given score if we didn't get enough new ones above it
     if resultSize < count
-      result << imagesInCategory.where('reddit_score < ?', score).order(reddit_score: :desc, created_at: :asc).limit(count - resultSize)
+      result + imagesInCategory.where('reddit_score < ?', score).order(reddit_score: :desc, created_at: :asc).limit(count - resultSize)
     end
 
     render json: result.as_json
