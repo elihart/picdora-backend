@@ -6,6 +6,13 @@ class Image < ActiveRecord::Base
   validates :imgurId, :reddit_score, presence: true
 
   def as_json(options={})
+  	# Get the ids of the categories that this image belongs to. Pluck() or ids() can be used as a shortcut, but it seems to requery the categories
+  	# even when we have them preloaded. This makes them unacceptably slow so we'll get them manually instead.
+  	category_ids = []
+  	self.categories.each do |c|
+  		category_ids << c.id
+  	end
+
   	{
         id: self.id,
         imgurId: self.imgurId,
@@ -14,7 +21,7 @@ class Image < ActiveRecord::Base
         nsfw: self.nsfw,
         deleted: self.deleted,
         reported: self.reported,
-        categories: self.categories.pluck(:id),
+        categories: category_ids,
         created_at: self.created_at.to_time.to_i,
         updated_at: self.updated_at.to_time.to_i
     }

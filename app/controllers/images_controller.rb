@@ -13,10 +13,12 @@ class ImagesController < ApplicationController
     count = params[:count].to_i
 
     # Get all the images in the requested category
-    imagesInCategory = Image.joins('INNER JOIN categories_images ON categories_images.image_id = images.id').where('categories_images.category_id=?', categoryId)
+    imagesInCategory = Image.includes(:categories).joins('INNER JOIN categories_images ON categories_images.image_id = images.id')
+    .where('categories_images.category_id=?', categoryId).where(deleted: false, reported: false)
+
     
-    result = imagesInCategory.where('reddit_score >= ? and created_at > ?', 
-      score, Time.at(createdAfter)).order(created_at: :asc).limit(count)
+    result = imagesInCategory.where('reddit_score >= ? and images.created_at > ?', 
+      score, Time.at(createdAfter)).order(reddit_score: :desc, created_at: :asc).limit(count)
 
     resultSize = result.size
 
