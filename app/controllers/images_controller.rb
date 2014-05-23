@@ -1,7 +1,11 @@
 class ImagesController < ApplicationController
 
 
-  # Get images from a category 
+  # Get images from a category. In order to only deliver images that aren't already on the device locally we will use a reddit score
+  # and creation date. A given score and date means that the device has all images created before that date with the given score or higher.
+  # We can then give them images with that score or higher created after that date, or images with a lower score. In the interest of better
+  # quality images we will attempt to use the high scoring images first. In order to keep this system working and synched correctly locally
+  # we need to sort the images we give by score and creation date.
   def new
     categoryId = params[:category_id]
     score = params[:score]
@@ -18,7 +22,7 @@ class ImagesController < ApplicationController
 
     
     result = imagesInCategory.where('reddit_score >= ? and images.created_at > ?', 
-      score, Time.at(createdAfter)).order(reddit_score: :desc, created_at: :asc).limit(count)
+      score, Time.at(createdAfter)).order(created_at: :asc).limit(count)
 
     resultSize = result.size
 
@@ -41,8 +45,8 @@ class ImagesController < ApplicationController
     batchLimit = batchLimit.to_i
 
     # Get one more image than we need so we can tell them what the next image id is
-    images = Image.where("id > ? and updated_at > ? and created_at <= ?", 
-      afterId, Time.at(lastUpdated.to_i), Time.at(lastCreated.to_i)).order(id: :asc).limit(batchLimit)
+    images = Image.includes(:categories).where("id > ? and updated_at > ? and created_at <= ?", 
+      afterId, Time.at(lastUpdated), Time.at(lastCreated)).order(id: :asc).limit(batchLimit)
 
     render json: images.as_json
   end
