@@ -7,13 +7,18 @@ namespace :backup do
       puts "Starting image backup at #{startTime}"
       
       Image.find_each do |image|
-        categories = image.categories.pluck(:name)
+        categories = image.categories.ids
 
         json = Jbuilder.encode do |json|
+          json.id image.id
+          json.deleted image.deleted
+          json.reported image.reported
           json.imgurId image.imgurId
           json.reddit_score image.reddit_score
           json.nsfw image.nsfw
           json.gif image.gif
+          json.created_at image.created_at
+          json.updated_at image.updated_at
           json.categories categories
         end
 
@@ -36,21 +41,26 @@ namespace :backup do
       startTime = Time.now
       puts "Starting album backup at #{startTime}"
 
-      Album.find_each do |album|
-        categories = album.categories.pluck(:name)
+      Album.includes(:categories).find_each do |album|
+        category_ids = []
+        album.categories.each do |c|
+          category_ids << c.id
+        end
 
+        # TODO: If we ever start using albums we should also back up their deleted status and timestamps
         json = Jbuilder.encode do |json|
+          json.id album.id
           json.imgurId album.imgurId
           json.reddit_score album.reddit_score
           json.nsfw album.nsfw
-          json.categories categories
+          json.categories category_ids
         end
 
         f.puts(json.to_s)
 
         count += 1
-        if (count % 5000 == 0) 
-          puts "#{count} : #{Time.now}" 
+        if (count % 10000 == 0) 
+          puts "#{count} : #{Time.now - startTime}" 
         end
       end
 
@@ -63,8 +73,10 @@ namespace :backup do
     File.open('categories_backup.json', 'w') do |f|
       Category.all.each do |cat|
         json = Jbuilder.encode do |json|
+          json.id cat.id
           json.name cat.name
           json.nsfw cat.nsfw
+          json.icon cat.icon
         end
 
         f.puts(json.to_s)
