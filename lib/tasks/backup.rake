@@ -6,8 +6,11 @@ namespace :backup do
       startTime = Time.now
       puts "Starting image backup at #{startTime}"
       
-      Image.find_each do |image|
-        categories = image.categories.ids
+      Image.includes(:categories).find_each do |image|
+        category_ids = []
+        image.categories.each do |c|
+          category_ids << c.id
+        end
 
         json = Jbuilder.encode do |json|
           json.id image.id
@@ -19,14 +22,14 @@ namespace :backup do
           json.gif image.gif
           json.created_at image.created_at
           json.updated_at image.updated_at
-          json.categories categories
+          json.categories category_ids
         end
 
         f.puts(json.to_s)
 
         count += 1
         if (count % 10000 == 0) 
-          puts "#{count} : #{Time.now}" 
+          puts "#{count} : #{Time.now - startTime}" 
         end
       end
 

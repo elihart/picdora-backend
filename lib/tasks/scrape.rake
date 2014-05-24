@@ -34,6 +34,8 @@ namespace :scrape do
               item = Image.create(imgurId: imgurId, nsfw: nsfw, reddit_score: reddit_score, gif: gif)
             end
           
+            # The item won't have been created if the imgurId is already in use. In this case we want
+            # to get the original and make sure it is labeled with this category.
             if item.id.nil?
               item = isAlbum ? Album.where(imgurId: imgurId).first : Image.where(imgurId: imgurId).first
             end
