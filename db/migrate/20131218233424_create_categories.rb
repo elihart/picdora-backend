@@ -3,6 +3,7 @@ class CreateCategories < ActiveRecord::Migration
     create_table :categories do |t|
       t.string :name, unique: true
       t.boolean :nsfw, default: false
+      t.string :icon
 
       t.timestamps
     end
@@ -13,5 +14,7 @@ class CreateCategories < ActiveRecord::Migration
     end
 
     add_index :categories_images, [ :category_id, :image_id ], unique: true, name: "by_image_and_category"
+    add_index :categories, :name, name: 'category_name_ix'
+
   end
 end
