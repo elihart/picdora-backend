@@ -1,35 +1,14 @@
 class ImagesController < ApplicationController
 
-
-  # Get images from a category. In order to only deliver images that aren't already on the device locally we will use a reddit score
-  # and creation date. A given score and date means that the device has all images created before that date with the given score or higher.
-  # We can then give them images with that score or higher created after that date, or images with a lower score. In the interest of better
-  # quality images we will attempt to use the high scoring images first. In order to keep this system working and synched correctly locally
-  # we need to sort the images we give by score and creation date.
-  def new
+  def top
     categoryId = params[:category_id]
-    score = params[:score]
-    # Convert from string to int and add 1 so we don't include this date. We want our dates to be greater than this, 
-    # but the query seems to include it even if we specify greater than (some Time conversion thing?), so just 
-    # get around this by adding 1.
-    createdAfter = params[:created_after].to_i + 1
+
     # How many images are desired
     count = params[:count].to_i
 
     # Get all the images in the requested category
-    imagesInCategory = Image.includes(:categories).joins('INNER JOIN categories_images ON categories_images.image_id = images.id')
-    .where('categories_images.category_id=?', categoryId).where(deleted: false, reported: false)
-
-    
-    result = imagesInCategory.where('reddit_score >= ? and images.created_at > ?', 
-      score, Time.at(createdAfter)).order(created_at: :asc).limit(count)
-
-    resultSize = result.size
-
-    # Include images below the given score if we didn't get enough new ones above it
-    if resultSize < count
-      result + imagesInCategory.where('reddit_score < ?', score).order(reddit_score: :desc, created_at: :asc).limit(count - resultSize)
-    end
+    result = Image.includes(:categories).joins('INNER JOIN categories_images ON categories_images.image_id = images.id')
+    .where('categories_images.category_id=?', categoryId).where(deleted: false, reported: false).order(reddit_score: :desc).limit(count)
 
     render json: result.as_json
   end
