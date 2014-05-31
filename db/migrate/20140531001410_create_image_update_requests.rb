@@ -1,8 +1,8 @@
 class CreateImageUpdateRequests< ActiveRecord::Migration
   def change
-    create_table :image_reports do |t|
-      t.belongs_to :user_id
-      t.belongs_to :image_id
+    create_table :image_update_requests do |t|
+      t.belongs_to :user
+      t.belongs_to :image
       t.boolean :deleted, default: false
       t.boolean :reported, default: false
       t.boolean :gif, default: false      

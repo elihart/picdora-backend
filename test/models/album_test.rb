@@ -29,17 +29,4 @@ class AlbumTest < ActiveSupport::TestCase
   	a1.reddit_score = nil
   	assert_not a1.valid?
   end
-
-  test "categories" do
-  	c = categories(:cat1)
-  	a = albums(:album1)
-
-  	a.categories << c
-  	assert a.categories.size == 1
-  	assert c.albums.include?(a)
-
-  	a.categories.delete_all
-  	assert a.categories.empty?
-  	assert_not c.albums.include?(a)
-  end
 end

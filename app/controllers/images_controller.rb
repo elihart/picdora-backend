@@ -39,17 +39,20 @@ class ImagesController < ApplicationController
     deleted = params[:deleted]
     gif = params[:gif]    
 
-    if !key.blank? && !id.nil?
+    if key.blank? || id.nil?
+      render nothing: true, status: 400
+    else
       # Get the user that belongs to this key
-      user_id = User.select(:id).where(device_key: key).first
+      user = User.where(device_key: key).first
+      if user.nil?
+        render nothing: true, status: 404
+      else
       # Submit a report if the user exists
-      if !user_id.nil?
-        ImageUpdateRequest.build_request(id, user_id, reported, deleted, gif)
+        ImageUpdateRequest.build_request(id, user.id, reported, deleted, gif)
+        render nothing: true, status: 200
       end
     end
-
-    # Don't need to return anything. Always return the same code so we don't give any info away about a correct key
-    render: :nothing, status: 200
+    
   end
 
 end

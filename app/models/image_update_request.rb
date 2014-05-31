@@ -13,6 +13,8 @@ class ImageUpdateRequest < ActiveRecord::Base
 	belongs_to :image
 
 	validates_uniqueness_of :user_id, scope: [:image_id]
+	validates :user_id, presence: true
+	validates :image_id, presence: true
 
 	def self.build_request(image_id, user_id, reported, deleted, gif)
 		# Create a request if one doesn't exist for this image/user combo
