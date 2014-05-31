@@ -14,7 +14,7 @@ class ImagesController < ApplicationController
   end
 
   # Check for images that have been updated within the given time spans.
-  def update
+  def updates
     afterId = params[:id]
     
     lastUpdated = params[:last_updated].to_i
@@ -28,6 +28,28 @@ class ImagesController < ApplicationController
       afterId, Time.at(lastUpdated), Time.at(lastCreated)).order(id: :asc).limit(batchLimit)
 
     render json: images.as_json
+  end
+
+
+  # Update an image to be reported, deleted, or change the gif setting.
+  def update
+    key = params[:key]
+    id = params[:id]
+    reported = params[:reported]
+    deleted = params[:deleted]
+    gif = params[:gif]    
+
+    if !key.blank? && !id.nil?
+      # Get the user that belongs to this key
+      user_id = User.select(:id).where(device_key: key).first
+      # Submit a report if the user exists
+      if !user_id.nil?
+        ImageUpdateRequest.build_request(id, user_id, reported, deleted, gif)
+      end
+    end
+
+    # Don't need to return anything. Always return the same code so we don't give any info away about a correct key
+    render: :nothing, status: 200
   end
 
 end
