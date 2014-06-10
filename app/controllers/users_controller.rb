@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-	protect_from_forgery with: :null_session
 	
 	# Register a login event for a given key. If the key hasn't been seen before then
 	# create a new user for it. If no key is given then 400 error. We don't need to return 
