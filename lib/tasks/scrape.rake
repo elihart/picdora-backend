@@ -40,6 +40,7 @@ namespace :scrape do
               item = isAlbum ? Album.where(imgurId: imgurId).first : Image.where(imgurId: imgurId).first
             end
             
+            # Make sure the album/image has this category, but don't add it again if it already exists
             Category.where(name: category).each do |c|
               unless item.categories.exists?(c)
                 item.categories << c
