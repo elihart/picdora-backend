@@ -31,7 +31,7 @@ class ImagesControllerTest < ActionController::TestCase
   	assert !request.reported && !request.deleted && !request.gif
 
   	# Test real user updating two things
-  	put(:update, {id: image_id, key: key, reported: true, gif: true})
+  	put(:update, {id: image_id, key: key, reported: 'true', gif: 'true', deleted: 'false'})
   	assert_response 200
 
   	assert ImageUpdateRequest.where(user_id: user_id, image_id: image_id).count == 1
@@ -40,7 +40,7 @@ class ImagesControllerTest < ActionController::TestCase
   	assert request.reported && !request.deleted && request.gif
 
   	# Test changing deleted
-  	put(:update, {id: image_id, key: key, reported: false, gif: false, deleted: true})
+  	put(:update, {id: image_id, key: key, reported: 'false', gif: 'false', deleted: 'true'})
   	assert_response 200
 
   	assert ImageUpdateRequest.where(user_id: user_id, image_id: image_id).count == 1

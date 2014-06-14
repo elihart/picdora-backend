@@ -35,9 +35,9 @@ class ImagesController < ApplicationController
   def update
     key = params[:key]
     id = params[:id]
-    reported = params[:reported]
-    deleted = params[:deleted]
-    gif = params[:gif]    
+    reported = params[:reported] == "true"
+    deleted = params[:deleted] == "true"
+    gif = params[:gif]  == "true"   
 
     if key.blank? || id.nil?
       render nothing: true, status: 400
