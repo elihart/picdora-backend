@@ -34,7 +34,7 @@ end
 MAX_ATTEMPTS = 3
 
 # Create migration file
-location = "../../db/migrate/"
+location = "../db/migrate/"
 time = Time.now.utc.to_s.chomp("UTC").gsub(/[-: ]/, '')
 file_name = "#{time}_add_categories#{time}.rb"
 File.open(location + file_name, 'w') do |migration|
