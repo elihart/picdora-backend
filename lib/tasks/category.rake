@@ -3,7 +3,9 @@ require 'open-uri'
 namespace :category do
   desc "update category icons based on the most popular images"
   task set_icons: :environment do
-    Category.find_each do |cat|
+    # Can change this to go through all categories or just those with no icon yet
+    #Category.find_each do |cat|
+    Category.where(icon: nil).each do |cat|
     	# Get top images for each category. Offset them slightyly; sometimes the first images are weird...
     	# Get a batch of several because the first one might have been deleted. Test the connection to
     	# each one and don't use it if we can't access it.
