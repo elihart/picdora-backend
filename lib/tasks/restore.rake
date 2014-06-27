@@ -9,6 +9,7 @@ namespace :restore do
   desc "Restore all images from json file"
   task images: :environment do
     startTime = Time.now
+    puts "Starting image restore"
 
     # Delete existing images and associated categories
     Image.delete_all
@@ -84,6 +85,9 @@ namespace :restore do
 
   desc "Restore albums"
   task albums: :environment do
+    startTime = Time.now
+    puts "Starting album restore"
+
     # Clear all existing albums
     Album.delete_all
     # And clear their categories
@@ -123,7 +127,7 @@ namespace :restore do
       end
     end
 
-    puts "#{albums.size} albums restored"
+    puts "#{albums.size} albums restored in #{Time.now - startTime} seconds"
   end
 
   desc "Restore categories"
@@ -133,7 +137,7 @@ namespace :restore do
 
     count = 0
     startTime = Time.now
-    puts "Starting category restore at #{startTime}"
+    puts "Starting category restore"
 
     categories = []
 
@@ -156,5 +160,17 @@ namespace :restore do
     Category.import categories, validate: false
 
     puts "#{count} categories restored in #{Time.now - startTime} seconds"
+  end
+
+  desc "Backup categories, images, and albums"
+  task all: :environment do
+    startTime = Time.now
+    puts "Restoring all data"
+    
+    Rake::Task["restore:categories"].invoke
+    Rake::Task["restore:albums"].invoke
+    Rake::Task["restore:images"].invoke
+
+    puts "Restore complete in #{Time.now - startTime} seconds"
   end
 end

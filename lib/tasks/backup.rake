@@ -11,7 +11,7 @@ namespace :backup do
     file_number = 0
     destFile = nil
     startTime = Time.now
-    puts "Starting image backup at #{startTime}"      
+    puts "Starting image backup"      
     
     Image.includes(:categories).find_each do |image|
       # Open a new file when the current one is full
@@ -42,6 +42,9 @@ namespace :backup do
       destFile.puts(json.to_s)
 
       count += 1
+      if (count % 50000 == 0) 
+        puts "#{count} : #{Time.now - startTime}" 
+      end
     end
 
     destFile.close
@@ -53,7 +56,7 @@ namespace :backup do
     File.open('albums_backup', 'w') do |f|
       count = 0
       startTime = Time.now
-      puts "Starting album backup at #{startTime}"
+      puts "Starting album backup"
 
       Album.includes(:categories).find_each do |album|
         category_ids = []
@@ -84,6 +87,8 @@ namespace :backup do
 
   desc "Backup categories"
   task categories: :environment do
+    startTime = Time.now
+    puts "Backing up categories"
     File.open('categories_backup', 'w') do |f|
       Category.all.each do |cat|
         json = Jbuilder.encode do |json|
@@ -97,5 +102,19 @@ namespace :backup do
         f.puts(json.to_s)
       end
     end
+
+    puts "Backed up #{Category.all.size} categories in #{Time.now - startTime} seconds"
+  end
+
+  desc "Backup categories, images, and albums"
+  task all: :environment do
+    startTime = Time.now
+    puts "Backing up all data"
+    
+    Rake::Task["backup:categories"].invoke
+    Rake::Task["backup:albums"].invoke
+    Rake::Task["backup:images"].invoke
+
+    puts "Backup complete in #{Time.now - startTime} seconds"
   end
 end

@@ -23,10 +23,8 @@ namespace :category do
      end     
     end
 
-  end
-end
-    
-namespace :category do
+  end    
+
   desc "Set category descriptions based on reddit public description"
   task set_descriptions: :environment do
     Category.find_each do |cat|
@@ -41,9 +39,7 @@ namespace :category do
       end
     end
   end
-end
 
-namespace :category do
   desc "Add categories from the list in /material"
   task add_from_list: :environment do
     # Get each of the categories to add. Check for duplicates or if they are already in the db
