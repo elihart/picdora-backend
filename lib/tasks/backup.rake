@@ -91,6 +91,7 @@ namespace :backup do
           json.name cat.name
           json.nsfw cat.nsfw
           json.icon cat.icon
+          json.reddit_description cat.reddit_description
         end
 
         f.puts(json.to_s)

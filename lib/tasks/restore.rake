@@ -146,8 +146,9 @@ namespace :restore do
         nsfw = json["nsfw"]
         id = json["id"]
         icon = json["icon"]
+        reddit_description = json["reddit_description"]
         
-        categories << Category.new(id: id, icon: icon, name: name, nsfw: nsfw)
+        categories << Category.new(id: id, icon: icon, name: name, nsfw: nsfw, reddit_description: reddit_description)
         count += 1
       end
     end

@@ -25,3 +25,55 @@ namespace :category do
 
   end
 end
+    
+namespace :category do
+  desc "Set category descriptions based on reddit public description"
+  task set_descriptions: :environment do
+    Category.find_each do |cat|
+      infoEndpoint = "http://www.reddit.com/r/#{cat.name}/about.json"
+      begin
+        categoryInfo = JSON.parse(open(infoEndpoint).read)
+        description = categoryInfo["data"]["public_description"]
+        puts "#{cat.name} : #{description}"
+        cat.update(reddit_description: description)
+      rescue
+        puts "Error getting info for #{cat.name}"
+      end
+    end
+  end
+end
+
+namespace :category do
+  desc "Add categories from the list in /material"
+  task add_from_list: :environment do
+    # Get each of the categories to add. Check for duplicates or if they are already in the db
+    categoriesToAdd = []
+    File.open("material/categories_to_add", 'r') do |file|
+      while (line = file.gets)
+        categoryName = line.strip.downcase
+        if categoriesToAdd.include? categoryName
+          puts "Dup! #{categoryName}"
+        elsif Category.exists?(name: categoryName)
+          puts "already in main list: #{categoryName}"
+        else
+          categoriesToAdd.push(categoryName)
+        end
+      end
+    end
+      
+    categoriesToAdd.each do |categoryName|
+      infoEndpoint = "http://www.reddit.com/r/#{categoryName}/about.json"        
+      categoryInfo = nil
+      begin
+        categoryInfo = JSON.parse(open(infoEndpoint).read)
+      rescue
+        puts "Unable to get data for #{categoryName}"
+        next
+      end
+
+      nsfw = categoryInfo["data"]["over18"]
+      description = categoryInfo["data"]["public_description"]
+      Category.create(name: categoryName, nsfw: nsfw, reddit_description: description)
+    end
+  end
+end
