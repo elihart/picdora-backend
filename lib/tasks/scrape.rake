@@ -85,7 +85,7 @@ namespace :scrape do
     totalCount = 0 
     Category.find_each do |cat|
       # Skip categories that already have images
-      if cat.images.count > 100
+      if cat.images.count != 0
         next
       end
 
