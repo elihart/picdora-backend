@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140627045422) do
+ActiveRecord::Schema.define(version: 20140531001410) do
 
   create_table "albums", force: true do |t|
     t.boolean  "nsfw",         default: false
@@ -33,9 +33,9 @@ ActiveRecord::Schema.define(version: 20140627045422) do
     t.string   "name"
     t.boolean  "nsfw",               default: false
     t.string   "icon"
+    t.string   "reddit_description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "reddit_description"
   end
 
   add_index "categories", ["name"], name: "category_name_ix"
@@ -71,12 +71,6 @@ ActiveRecord::Schema.define(version: 20140627045422) do
 
   create_table "logins", force: true do |t|
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "scrapes", force: true do |t|
-    t.string   "key"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

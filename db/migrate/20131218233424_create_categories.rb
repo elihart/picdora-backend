@@ -4,6 +4,7 @@ class CreateCategories < ActiveRecord::Migration
       t.string :name, unique: true
       t.boolean :nsfw, default: false
       t.string :icon
+      t.string :reddit_description
 
       t.timestamps
     end
