@@ -89,10 +89,16 @@ module ScraperHelper
       begin
         results = JSON.parse(open(url).read)
         break
-      rescue
-        puts "Error reaching reddit. Trying again..."
-        sleep 3
-      end
+      rescue OpenURI::HTTPError => ex
+        puts "http error #{url} : #{ex}"
+        if ex.io.status[0] == "404"
+          puts "returning empty for 404"
+          return {links: [], after: nil}
+        else
+          puts "Error reaching #{url}. Trying again..."
+          sleep 3
+        end
+      end   
     end
 
     # Record results
@@ -112,7 +118,7 @@ module ScraperHelper
   end
 
   def buildUrl(subreddit, time, after)
-    "http://www.reddit.com/r/#{subreddit}/top.json?sort=top&limit=100&t=#{time}&after=#{after}"
+    return "http://www.reddit.com/r/#{subreddit}/top.json?sort=top&limit=100&t=#{time}&after=#{after}"
   end
 
   # Given a url, get all imgur id's, either image ids or an album id.

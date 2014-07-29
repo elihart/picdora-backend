@@ -1,4 +1,5 @@
 namespace :backup do
+  
   desc "Backup all images to json file"
   task images: :environment do
     # Base file name for the backup files
